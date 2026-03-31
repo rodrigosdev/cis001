@@ -5,14 +5,14 @@ import { Badge } from "../ui/badge-component";
 
 const GRID_COLS = 2;
 const SPONSOR_LOGOS = [
-  { alt: "Fundação Inatel", src: "/inatel.png", className: "" },
-  { alt: "Secil", src: "/secil.png", className: "" },
+  { alt: "Câmara Municipal de Setúbal", src: "/cms-logo.png", className: "" },
   {
     alt: "União das Freguesias de Setúbal",
     src: "/ufs-logo.png",
     className: "p-3",
   },
-  { alt: "Câmara Municipal de Setúbal", src: "/cms-logo.png", className: "" },
+  { alt: "Fundação Inatel", src: "/inatel.png", className: "" },
+  { alt: "Secil", src: "/secil.png", className: "" },
 ] as const;
 
 const Sponsors = () => {

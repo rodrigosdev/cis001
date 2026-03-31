@@ -20,7 +20,37 @@ type FeaturedEvent = {
   href: string;
 };
 
+const EVENT_TIME_REGEX = /^(\d{1,2})h(\d{2})$/;
+
+const eventEndDateTime = (event: FeaturedEvent) => {
+  const when = new Date(event.date);
+  const match = EVENT_TIME_REGEX.exec(event.time);
+  if (match) {
+    const hours = Number.parseInt(match[1], 10);
+    const minutes = Number.parseInt(match[2], 10);
+    when.setHours(hours, minutes, 0, 0);
+  } else {
+    when.setHours(23, 59, 59, 999);
+  }
+  return when;
+};
+
+const isEventPast = (event: FeaturedEvent) =>
+  eventEndDateTime(event) < new Date();
+
 const FEATURED_EVENTS: FeaturedEvent[] = [
+  {
+    id: "xxxi-encontro-coros",
+    name: "XXXI Encontro de Coros Infantis-Juvenis",
+    date: new Date(2026, 2, 29),
+    time: "17h00",
+    location: "Fórum Municipal Luísa Todi",
+    price: "Bilhetes: 7,50€",
+    imageAlt:
+      "Cartaz do XXXI Encontro de Coros Infantis-Juvenis no Fórum Municipal Luísa Todi",
+    imageSrc: "/A4_VF.png",
+    href: "https://luisatodi.bol.pt/",
+  },
   {
     id: "anniversary",
     name: "46º Aniversário do Coral infantil de Setúbal",
@@ -46,7 +76,7 @@ const groupEventsByMonth = () => {
     buckets.set(key, [event]);
   }
   return Array.from(buckets.entries())
-    .sort((a, b) => a[0] - b[0])
+    .sort((a, b) => b[0] - a[0])
     .map(([key, events]) => {
       const year = Math.floor(key / 100);
       const monthIndex = key - year * 100;
@@ -66,14 +96,17 @@ const formatDateBadge = (date: Date) => ({
 
 const EventCard = ({ event }: { event: FeaturedEvent }) => {
   const badge = formatDateBadge(event.date);
+  const past = isEventPast(event);
   return (
-    <div className="relative flex w-full flex-col gap-4 rounded-[24px] border border-[rgba(55,50,47,0.1)] bg-white/95 p-4 shadow-[0px_16px_40px_rgba(10,10,10,0.04)] sm:grid sm:grid-cols-[280px_minmax(0,1fr)] sm:gap-6 sm:p-6">
+    <div
+      className={`relative flex w-full flex-col gap-4 rounded-[24px] border border-[rgba(55,50,47,0.1)] bg-white/95 p-4 shadow-[0px_16px_40px_rgba(10,10,10,0.04)] sm:grid sm:grid-cols-[280px_minmax(0,1fr)] sm:gap-6 sm:p-6 ${past ? "opacity-[0.72] grayscale" : ""}`}
+    >
       <div className="relative w-full overflow-hidden rounded-2xl bg-[#E1ECF7]">
         <Image
           alt={event.imageAlt}
           className="w-full object-fit"
           height={280}
-          priority
+          priority={!past}
           src={event.imageSrc}
           width={420}
         />
@@ -92,8 +125,15 @@ const EventCard = ({ event }: { event: FeaturedEvent }) => {
             <h3 className="font-sans font-semibold text-[#241C17] text-xl sm:text-2xl">
               {event.name}
             </h3>
-            <span className="inline-flex shrink-0 rounded-full bg-[#DDEBFF] px-4 py-1.5 font-sans font-semibold text-[#0D4A85] text-xs uppercase tracking-[0.2em]">
-              {event.price}
+            <span className="inline-flex shrink-0 flex-wrap items-center justify-end gap-2">
+              {past ? (
+                <span className="inline-flex rounded-full bg-[rgba(55,50,47,0.08)] px-4 py-1.5 font-sans font-semibold text-[#605A57] text-xs uppercase tracking-[0.2em]">
+                  Realizado
+                </span>
+              ) : null}
+              <span className="inline-flex shrink-0 rounded-full bg-[#DDEBFF] px-4 py-1.5 font-sans font-semibold text-[#0D4A85] text-xs uppercase tracking-[0.2em]">
+                {event.price}
+              </span>
             </span>
           </div>
           <div className="flex flex-col gap-4 font-medium text-[#4E4743] text-sm md:mt-20">
@@ -118,12 +158,18 @@ const EventCard = ({ event }: { event: FeaturedEvent }) => {
           </div>
         </div>
 
-        <button
-          className="w-full items-center justify-center rounded-full border border-[rgba(13,74,133,0.2)] bg-[#0D4A85] px-5 py-2.5 font-sans font-semibold text-lg text-white uppercase tracking-[0.25em] transition hover:bg-[#09315F]"
-          type="button"
-        >
-          <Link href={event.href}>Ver mais</Link>
-        </button>
+        {past ? (
+          <span className="flex w-full cursor-not-allowed items-center justify-center rounded-full border border-[rgba(55,50,47,0.15)] bg-[rgba(55,50,47,0.06)] px-5 py-2.5 text-center font-sans font-semibold text-[#605A57] text-lg uppercase tracking-[0.25em]">
+            Evento realizado
+          </span>
+        ) : (
+          <Link
+            className="flex w-full items-center justify-center rounded-full border border-[rgba(13,74,133,0.2)] bg-[#0D4A85] px-5 py-2.5 font-sans font-semibold text-lg text-white uppercase tracking-[0.25em] transition hover:bg-[#09315F]"
+            href={event.href}
+          >
+            Ver mais
+          </Link>
+        )}
       </div>
     </div>
   );
