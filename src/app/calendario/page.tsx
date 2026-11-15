@@ -40,6 +40,18 @@ const isEventPast = (event: FeaturedEvent) =>
 
 const FEATURED_EVENTS: FeaturedEvent[] = [
   {
+    id: "47-aniversario",
+    name: "47º Aniversário do Coral Infantil de Setúbal",
+    date: new Date(2026, 10, 14),
+    time: "21h00",
+    location: "Fórum Municipal Luísa Todi",
+    price: "Bilhetes: 8€",
+    imageAlt:
+      "Cartaz do 47º Aniversário do Coral Infantil de Setúbal, Banda, Coro, Ação!",
+    imageSrc: "/cartaz-47-aniv.jpg",
+    href: "https://luisatodi.bol.pt/Comprar/Bilhetes/187701-concerto_comemorativo_do_47o_aniversario_do_coral_infantil_de_setubal-forum_municipal_luisa_todi/Sessoes",
+  },
+  {
     id: "xxxi-encontro-coros",
     name: "XXXI Encontro de Coros Infantis-Juvenis",
     date: new Date(2026, 2, 29),
